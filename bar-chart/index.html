@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+  <title>D3.js Bar Chart Project</title>
+</head>
+<body>
+  <div id="title">
+    <p style="text-align: center;">USA GDP</p>
+  </div>
+  <div id="barChart">
+    <svg width="650" height="500"></svg>
+  </div>
+  <script type='text/javascript' src='./index.js'></script>
+  <style>
+    body {
+      background-color: #ffb79d;
+      font-family: "Roboto";
+    }
+
+    #title {
+      font-size: 2em;
+    }
+    .bar {
+      fill: #800075;
+    }
+
+    svg {
+      display: block;
+      margin: auto;
+    }
+    #barChart {
+      background-color: antiquewhite;
+      box-shadow: 1px 1px 10px
+    }
+  </style>
+</body>
+</html>
