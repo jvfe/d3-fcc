@@ -11,13 +11,16 @@ function testes(data) {
     point.temp = Math.round((reference + point.variance) * 10) / 10
     point.monthstring = months[point.month - 1]
   });
-  monthInt = d3.timeParse("%B")
-  console.log(monthInt(accessor[0].monthstring).getMonth())
+  const colors = d3.scaleSequential()
+    .interpolator(d3.interpolateRdYlBu)
+    .domain([d3.max(accessor, (d) => d.temp), d3.min(accessor, (d) => d.temp)])
+
+  console.log(colors.ticks())
 
 };
 
 function drawgraph(data) {
-  const margin = { top: 30, right: 30, bottom: 30, left: 30 },
+  const margin = { top: 30, right: 30, bottom: 30, left: 65 },
     width = 1200,
     innerWidth = width - margin.left - margin.right,
     height = 450,
@@ -73,6 +76,41 @@ function drawgraph(data) {
     .call(d3.axisLeft(yScale))
     .select(".domain").remove()
 
+  const Tooltip = d3.select("#heatMap")
+    .append("div")
+    .style("opacity", 0)
+    .attr("id", "tooltip")
+    .style("background-color", "#ffe876")
+    .style("border", "solid")
+    .style("border-width", "0px")
+    .style("border-radius", "5px")
+    .style("text-align", "center")
+    .style("padding", "5px");
+
+  const mouseOver = function (d) {
+    Tooltip
+      .style("opacity", 1)
+      .style("box-shadow", "1px 1px 10px");
+    d3.select(this)
+      .style("stroke", "black")
+      .style("opacity", 1);
+  };
+  const mouseMove = function (d, i) {
+    Tooltip
+      .attr("data-year", d.year)
+      .html(`${d.month}, ${d.year}</br>${d.temp}ºC`)
+      .style("position", "absolute")
+      .style("left", (d3.event.pageX) + "px")
+      .style("top", (d3.event.pageY) + "px");
+  };
+  const mouseOut = function (d) {
+    Tooltip
+      .style("opacity", 0);
+    d3.select(this)
+      .style("stroke", "none")
+      .style("opacity", 0.8);
+  };
+
   heats = svg.append("g");
 
   heats.selectAll("#cells")
@@ -89,7 +127,29 @@ function drawgraph(data) {
     .attr("data-temp", (d) => d.temp)
     .attr("data-month", (d) => monthInt(d.month).getMonth())
     .style("fill", (d) => colors(d.temp))
-    .style("stroke-width", 4)
+    .style("stroke-width", 2)
     .style("stroke", "none")
-  // .style("opacity", 0.8)
+    .on("mouseover", mouseOver)
+    .on("mousemove", mouseMove)
+    .on("mouseleave", mouseOut);
+
+  const legendWidth = 150,
+    legendHeight = 50,
+    legendRectWidth = legendWidth / colors.ticks().length;
+
+  const legend = d3.select('body')
+    .append('svg')
+    .attr('id', 'legend')
+    .attr('width', legendWidth)
+    .attr('height', legendHeight)
+    .selectAll('rect')
+    .data(colors.ticks().reverse())
+    .join('rect')
+    .attr('x', (d, i) => i * legendRectWidth)
+    .attr('y', 0)
+    .attr("rx", 4)
+    .attr("ry", 4)
+    .attr('width', legendRectWidth)
+    .attr('height', legendHeight)
+    .attr('fill', (col) => colors(col))
 };
