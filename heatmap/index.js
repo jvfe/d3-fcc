@@ -3,8 +3,17 @@ const url = "https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData
 d3.json(url).then(data => drawgraph(data));
 
 function testes(data) {
-  accessor = data.monthlyVariance
-  console.log(Array.from(new Set(accessor.map((y) => y.year))))
+  const accessor = data.monthlyVariance,
+    reference = data.baseTemperature,
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  accessor.forEach(point => {
+    point.temp = Math.round((reference + point.variance) * 10) / 10
+    point.monthstring = months[point.month - 1]
+  });
+  monthInt = d3.timeParse("%B")
+  console.log(monthInt(accessor[0].monthstring).getMonth())
+
 };
 
 function drawgraph(data) {
@@ -15,13 +24,18 @@ function drawgraph(data) {
     innerHeight = height - margin.top - margin.bottom;
 
   const accessor = data.monthlyVariance,
-    reference = data.baseTemperature;
+    reference = data.baseTemperature,
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
   accessor.forEach(point => {
     point.temp = Math.round((reference + point.variance) * 10) / 10
+    point.month = months[point.month - 1]
   });
 
+  const monthInt = d3.timeParse("%B");
+
   const decades = Array.from(new Set(accessor.map((y) => y.year - (y.year % 10))))
+  decades.shift()
 
   const svg = d3.select("#heatMap")
     .append("svg")
@@ -32,7 +46,7 @@ function drawgraph(data) {
       `translate(${margin.left},${margin.top})`);
 
   const yScale = d3.scaleBand()
-    .domain(d3.range(d3.max(accessor, (d) => d.month)))
+    .domain(months)
     .range([0, innerHeight])
     .padding(0.01);
 
@@ -52,7 +66,6 @@ function drawgraph(data) {
     .attr("id", "x-axis")
     .attr("transform", `translate(0,${innerHeight})`)
     .call(d3.axisBottom(xScale).tickValues(decades))
-    // .tickFormat(d3.format("d")))
     .select(".domain").remove();
 
   axes.append("g")
@@ -72,6 +85,9 @@ function drawgraph(data) {
     .attr("class", "cell")
     .attr("width", xScale.bandwidth())
     .attr("height", yScale.bandwidth())
+    .attr("data-year", (d) => d.year)
+    .attr("data-temp", (d) => d.temp)
+    .attr("data-month", (d) => monthInt(d.month).getMonth())
     .style("fill", (d) => colors(d.temp))
     .style("stroke-width", 4)
     .style("stroke", "none")
