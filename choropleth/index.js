@@ -38,24 +38,20 @@ function drawgraph(values) {
     .style("padding", "5px");
 
   const mouseOver = function (d) {
+    county = d3.select( this )
     Tooltip
+      .attr("data-education", county.attr("data-education"))
       .style("opacity", 1)
-      .style("box-shadow", "1px 1px 10px");
-    d3.select(this)
-      .style("stroke", "black")
-      .style("opacity", 1);
-  };
-  const mouseMove = function (d, i) {
-    Tooltip
-    .attr("data-education", (ed) => {
-      result = edu.filter((obj) => obj.fips == d.id);
-      return (result[0] ? result[0].bachelorsOrHigher : 0)
-    })
-      // .html(`${d.month}, ${d.year}</br>${d.temp}ºC`)
+      .style("box-shadow", "1px 1px 10px")
+      .html(`${county.attr("data-education")}%`)
       .style("position", "absolute")
       .style("left", (d3.event.pageX) + "px")
       .style("top", (d3.event.pageY) + "px");
+    county
+      .style("stroke", "black")
+      .style("opacity", 1);
   };
+
   const mouseOut = function (d) {
     Tooltip
       .style("opacity", 0);
@@ -83,7 +79,6 @@ function drawgraph(values) {
     })
     .attr("d", path)
     .on("mouseover", mouseOver)
-    .on("mousemove", (d,i) => mouseMove(d,i))
     .on("mouseleave", mouseOut);
 
 
