@@ -37,17 +37,18 @@ function drawgraph(data) {
     .append("div")
     .style("opacity", 0)
     .attr("id", "tooltip")
-    .style("background-color", "#ffe876")
     .style("border", "solid")
     .style("border-width", "0px")
     .style("border-radius", "5px")
     .style("padding", "5px");
 
   const mouseOver = function (d) {
+    current = d3.select(this)
     Tooltip
       .style("opacity", 1)
+      .style("background-color", current.attr('fill'))
       .style("box-shadow", "1px 1px 10px");
-    d3.select(this)
+    current
       .style("stroke", "black")
       .style("opacity", 1);
   };
@@ -63,20 +64,19 @@ function drawgraph(data) {
     Tooltip
       .style("opacity", 0);
     d3.select(this)
-      .style("stroke", "none")
       .style("opacity", 0.8);
   };
 
   dots.selectAll(".dot")
     .data(data)
-    .enter().append("circle")
+    .join("circle")
     .attr("class", "dot")
     .attr("r", 7)
     .attr("cy", (d) => yScale(d.Time))
     .attr("cx", (d) => xScale(d.Year))
     .attr("data-xvalue", (d) => d.Year)
     .attr("data-yvalue", (d) => d.Time)
-    .attr("opacity", 0.5)
+    .attr("opacity", 0.8)
     .attr("stroke", "black")
     .attr("fill", (d) => color(d.Doping != ""))
     .on("mouseover", mouseOver)
@@ -91,27 +91,31 @@ function drawgraph(data) {
 
   axes.append("g")
     .attr("id", "y-axis")
-    // .style("font-size", "9px")
     .call(d3.axisLeft(yScale)
       .ticks(10)
       .tickFormat((d) => onlyMinutes(d)));
   
-  legend = svg.append('g').selectAll("#legend")
+  legend = svg.append('g')
+  .attr('id', 'legendBox')
+  .attr('width', 180)
+  .attr('height', 55)
+  .selectAll("#legend")
     .data(color.domain())
-    .enter().append("g")
+    .join("g")
     .attr("id", "legend")
     .attr("transform", (d, i) => `translate(0, ${height / 3 - i * 30})`)
 
-  legend.append("ellipse")
-    .attr("cx", width - 10)
+  legend.append("rect")
+    .attr("x", width - 10)
     .attr("ry", 5)
-    .attr("rx", 10)
-    .attr("cy", 10)
+    .attr("rx", 5)
+    .attr("width", 20)
+    .attr("height", 20)
     .attr("stroke", "black")
     .style("fill", color);
 
   legend.append("text")
-    .attr("x", width - 24)
+    .attr("x", width - 15)
     .attr("y", 9)
     .attr("dy", ".35em")
     .style("text-anchor", "end")

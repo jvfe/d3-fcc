@@ -1,3 +1,4 @@
+// https://observablehq.com/@d3/treemap
 const url = "https://cdn.freecodecamp.org/testable-projects-fcc/data/tree_map/video-game-sales-data.json";
 
 d3.json(url).then(data => drawgraph(data));
@@ -26,7 +27,7 @@ function drawgraph(data) {
   const svg = d3.select("#treeMap")
     .append("svg")
     .attr("viewBox", [0, 0, width, height])
-    .style("font", "9px sans-serif");
+    .style("font", "9px Roboto");
 
   const leaf = svg.selectAll("g")
     .data(root.leaves())
@@ -37,7 +38,6 @@ function drawgraph(data) {
     .append("div")
     .style("opacity", 0)
     .attr("id", "tooltip")
-    .style("background-color", "#ffe876")
     .style("border", "solid")
     .style("border-width", "0px")
     .style("border-radius", "5px")
@@ -48,6 +48,7 @@ function drawgraph(data) {
     cell = d3.select(this)
     Tooltip
       .attr("data-value", cell.attr("data-value"))
+      .style("background-color", cell.attr("fill"))
       .style("opacity", 1)
       .style("box-shadow", "1px 1px 10px")
       .html(`${cell.attr("data-name")}</br>${cell.attr("data-category")}</br>${cell.attr("data-value")}`)
@@ -56,7 +57,6 @@ function drawgraph(data) {
       .style("top", (d3.event.pageY) + "px");
     cell
       .style("stroke", "black")
-      .style("opacity", 1);
   };
 
   const mouseOut = function (d) {
@@ -64,7 +64,6 @@ function drawgraph(data) {
       .style("opacity", 0);
     d3.select(this)
       .style("stroke", "none")
-      .style("opacity", 0.8);
   };
 
   leaf.append("rect")
@@ -79,8 +78,6 @@ function drawgraph(data) {
     .on("mouseover", mouseOver)
     .on("mouseleave", mouseOut);
 
-
-
   leaf.append("text")
     .selectAll("tspan")
     .data(d => d.data.name.split(/(?=[A-Z][a-z])|\s+/g))
@@ -92,12 +89,12 @@ function drawgraph(data) {
   legend = d3.select("#treeMap").append('svg')
     .join("g")
     .attr("id", "legend")
-    .attr("width", 960).attr("height", 50);
+    .attr("width", 960)
+    .attr("height", 50);
 
   legend.selectAll('rect')
     .data(root.children)
-    .enter()
-    .append('rect')
+    .join('rect')
     .attr('class', 'legend-item')
     .style('stroke', 'white')
     .attr('x', (d, i) => i * 50)
@@ -109,9 +106,10 @@ function drawgraph(data) {
 
   legend.selectAll('text')
     .data(root.children)
-    .enter()
-    .append('text')
+    .join('text')
     .attr('x', (d, i) => i * 50)
-    .attr('y', 40)
+    .attr('y', 14)
+    .style('font-weight', 'bold')
+    .style('font-size', '12px')
     .text(d => d.data.name);
 };
