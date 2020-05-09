@@ -2,23 +2,6 @@ const url = "https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData
 
 d3.json(url).then(data => drawgraph(data));
 
-function testes(data) {
-  const accessor = data.monthlyVariance,
-    reference = data.baseTemperature,
-    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-  accessor.forEach(point => {
-    point.temp = Math.round((reference + point.variance) * 10) / 10
-    point.monthstring = months[point.month - 1]
-  });
-  const colors = d3.scaleSequential()
-    .interpolator(d3.interpolateRdYlBu)
-    .domain([d3.max(accessor, (d) => d.temp), d3.min(accessor, (d) => d.temp)])
-
-  console.log(colors.ticks())
-
-};
-
 function drawgraph(data) {
   const margin = { top: 30, right: 30, bottom: 30, left: 65 },
     width = 1200,

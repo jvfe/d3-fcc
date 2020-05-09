@@ -3,12 +3,6 @@ files = ["https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map
 
 Promise.all(files.map(url => d3.json(url))).then((values) => drawgraph(values));
 
-
-function testes(data) {
-
-
-};
-
 function drawgraph(values) {
   const US = values[0],
     edu = values[1]
@@ -26,7 +20,7 @@ function drawgraph(values) {
   svg.append("g")
     .attr("transform", "translate(610,20)")
 
-    const Tooltip = d3.select("#heatMap")
+  const Tooltip = d3.select("#heatMap")
     .append("div")
     .style("opacity", 0)
     .attr("id", "tooltip")
@@ -38,12 +32,12 @@ function drawgraph(values) {
     .style("padding", "5px");
 
   const mouseOver = function (d) {
-    county = d3.select( this )
+    county = d3.select(this)
     Tooltip
       .attr("data-education", county.attr("data-education"))
       .style("opacity", 1)
       .style("box-shadow", "1px 1px 10px")
-      .html(`${county.attr("data-education")}%`)
+      .html(`${county.attr("area-name")}</br>${county.attr("data-education")}%`)
       .style("position", "absolute")
       .style("left", (d3.event.pageX) + "px")
       .style("top", (d3.event.pageY) + "px");
@@ -72,6 +66,10 @@ function drawgraph(values) {
     .attr("data-education", (d) => {
       result = edu.filter((obj) => obj.fips == d.id);
       return (result[0] ? result[0].bachelorsOrHigher : 0)
+    })
+    .attr("area-name", (d) => {
+      result = edu.filter((obj) => obj.fips == d.id);
+      return (result[0] ? result[0].area_name : 0)
     })
     .attr("fill", (d) => {
       result = edu.filter((obj) => obj.fips == d.id);
