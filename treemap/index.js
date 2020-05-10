@@ -24,6 +24,33 @@ function drawgraph(data) {
 
   const root = treemap(data);
 
+  legend = d3.select("#treeMap").append('svg')
+    .join("g")
+    .attr("id", "legend")
+    .attr("width", 960)
+    .attr("height", 50);
+
+  legend.selectAll('rect')
+    .data(root.children)
+    .join('rect')
+    .attr('class', 'legend-item')
+    .style('stroke', 'white')
+    .attr('x', (d, i) => i * 50)
+    .attr('width', 40)
+    .attr('height', 20)
+    .attr('rx', 4)
+    .attr('ry', 4)
+    .style('fill', d => color(d.data.name))
+
+  legend.selectAll('text')
+    .data(root.children)
+    .join('text')
+    .attr('x', (d, i) => i * 50 + 5)
+    .attr('y', 14)
+    .style('font-weight', 'bold')
+    .style('font-size', '12px')
+    .text(d => d.data.name);
+
   const svg = d3.select("#treeMap")
     .append("svg")
     .attr("viewBox", [0, 0, width, height])
@@ -85,31 +112,4 @@ function drawgraph(data) {
     .attr("x", 3)
     .attr("y", (d, i, nodes) => `${(i === nodes.length - 1) * 0.3 + 1.0 + i * 0.9}em`)
     .text(d => d);
-
-  legend = d3.select("#treeMap").append('svg')
-    .join("g")
-    .attr("id", "legend")
-    .attr("width", 960)
-    .attr("height", 50);
-
-  legend.selectAll('rect')
-    .data(root.children)
-    .join('rect')
-    .attr('class', 'legend-item')
-    .style('stroke', 'white')
-    .attr('x', (d, i) => i * 50)
-    .attr('width', 30)
-    .attr('height', 20)
-    .attr('rx', 4)
-    .attr('ry', 4)
-    .style('fill', d => color(d.data.name))
-
-  legend.selectAll('text')
-    .data(root.children)
-    .join('text')
-    .attr('x', (d, i) => i * 50)
-    .attr('y', 14)
-    .style('font-weight', 'bold')
-    .style('font-size', '12px')
-    .text(d => d.data.name);
 };

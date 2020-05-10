@@ -63,7 +63,6 @@ function drawgraph(data) {
     .append("div")
     .style("opacity", 0)
     .attr("id", "tooltip")
-    .style("background-color", "#ffe876")
     .style("border", "solid")
     .style("border-width", "0px")
     .style("border-radius", "5px")
@@ -73,7 +72,8 @@ function drawgraph(data) {
   const mouseOver = function (d) {
     Tooltip
       .style("opacity", 1)
-      .style("box-shadow", "1px 1px 10px");
+      .style("box-shadow", "1px 1px 10px")
+      .style("background-color", d3.select(this).attr('fill'));
     d3.select(this)
       .style("stroke", "black")
       .style("opacity", 1);
@@ -109,7 +109,7 @@ function drawgraph(data) {
     .attr("data-year", (d) => d.year)
     .attr("data-temp", (d) => d.temp)
     .attr("data-month", (d) => monthInt(d.month).getMonth())
-    .style("fill", (d) => colors(d.temp))
+    .attr("fill", (d) => colors(d.temp))
     .style("stroke-width", 2)
     .style("stroke", "none")
     .on("mouseover", mouseOver)
@@ -124,8 +124,9 @@ function drawgraph(data) {
     .append('svg')
     .attr('id', 'legend')
     .attr('width', legendWidth)
-    .attr('height', legendHeight)
-    .selectAll('rect')
+    .attr('height', legendHeight);
+
+  legend.selectAll('rect')
     .data(colors.ticks().reverse())
     .join('rect')
     .attr('x', (d, i) => i * legendRectWidth)
@@ -133,6 +134,6 @@ function drawgraph(data) {
     .attr("rx", 4)
     .attr("ry", 4)
     .attr('width', legendRectWidth)
-    .attr('height', legendHeight)
+    .attr('height', legendHeight-30)
     .attr('fill', (col) => colors(col))
 };
